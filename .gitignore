@@ -1,0 +1,18 @@
+# Virtual Environment
+.venv/
+venv/
+env/
+
+# Byte-compiled files
+__pycache__/
+*.pyc
+
+# IDE/Editor specific files (IntelliJ/PyCharm)
+.idea/
+*.iml
+
+# Operating System files
+.DS_Store
+
+# Dependency/Tool Specific Folders (Based on your listing)
+.continue/
