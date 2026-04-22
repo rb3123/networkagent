@@ -1,5 +1,7 @@
 # 🚀 AI Network Agent (Local, Autonomous, Context-Aware)
 
+> **Part 1** of an ongoing series exploring agentic AI for network operations. More approaches coming soon.
+
 A local, agentic AI that monitors network infrastructure, understands context, and autonomously remediates issues—without overreacting to normal user behavior.
 
 ---
@@ -11,7 +13,19 @@ Traditional network automation often fails because it:
 *   **Applies static rules** that don't account for environment changes.
 *   **Cannot distinguish** between intentional administrative changes and genuine anomalies.
 
-**This project demonstrates closed-loop, context-aware remediation using AI + MCP (Model Context Protocol).**
+**This project demonstrates closed-loop, context-aware remediation using AI + [MCP (Model Context Protocol)](https://modelcontextprotocol.io/).**
+
+---
+
+## 🧠 Key Insight
+
+> The intelligence is not just the LLM; it is the **context** you provide to it.
+
+The agent makes decisions based on:
+*   Real-time interface states.
+*   Endpoint presence and reachability.
+*   Current interface and device configuration.
+*   Confidence scoring before making changes.
 
 ---
 
@@ -25,15 +39,38 @@ This **IS**:
 *   🧠 **Context-aware reasoning**: Evaluates state before acting.
 *   🔁 **Closed-loop automation**: Detects, analyzes, fixes, and verifies.
 *   🛠️ **Tool-based architecture**: Uses MCP to bridge the gap between LLMs and CLI.
+*   🎯 **Confidence scoring**: Rates its own certainty before making config changes.
 *   🏠 **100% Local**: Privacy-focused, running entirely on your hardware.
 
 ---
 
 ## 🏗️ Architecture
 
-![High Level Lab Design](architecture/high_level_lab_design.png)
+![High Level Lab Design — MCP server bridges the LLM (Ollama) and Cisco switch (via Netmiko) in a GNS3 lab](architecture/high_level_lab_design.png)
 
 The system utilizes an MCP server to provide the LLM with specific "tools" (via Netmiko) to interact with Cisco switches, while Ollama handles the reasoning logic locally.
+
+```
+┌─────────────┐     ┌─────────────┐     ┌─────────────────┐     ┌──────────────┐
+│  Ollama LLM │◄───►│   Agent     │◄───►│  MCP Server     │◄───►│ Cisco Switch │
+│  (Gemma4)   │     │  (Reasoner) │     │  (FastMCP +     │     │ (GNS3 Lab)   │
+│             │     │             │     │   Netmiko)      │     │              │
+└─────────────┘     └─────────────┘     └─────────────────┘     └──────────────┘
+                          │
+                    Detect → Analyze → Fix → Verify
+```
+
+---
+
+## 🔄 How It Works
+
+Each monitoring cycle follows this flow:
+
+1. **Detect** — Ping the VIP endpoint to check reachability.
+2. **Analyze** — If unreachable, inspect interface state and configuration.
+3. **Reason** — LLM evaluates context and assigns a confidence score.
+4. **Fix** — Apply corrective action (no shutdown, VLAN fix, etc.) if confidence is high.
+5. **Verify** — Re-check endpoint reachability to confirm the fix worked.
 
 ---
 
@@ -70,37 +107,52 @@ interface e3/0
 | **MCP Server**         | [FastMCP](https://github.com/jlowin/fastmcp)  |
 | **Network Automation** | [Netmiko](https://github.com/ktbyers/netmiko) |
 | **Local AI Engine**    | [Ollama](https://ollama.com/)                 |
-| **Local LLM**          | [Gemma4(E4B)](https://deepmind.google/models/gemma/gemma-4/#e2b-and-e4b)            |
-| **Lab Environment**    | GNS3                                          |
+| **Local LLM**          | [Gemma4 (E4B)](https://deepmind.google/models/gemma/gemma-4/#e2b-and-e4b) |
+| **Lab Environment**    | GNS3 (Cisco IOS image)          |
+
+---
+
+## 📋 Prerequisites
+
+- **Python** 3.10+
+- **Ollama** installed and running locally ([install guide](https://ollama.com/download))
+- **Gemma4 model** pulled: `ollama pull gemma4:e4b`
+- **GNS3** with a Cisco IOS switch image configured and reachable via telnet
+- **Git** (to clone the repo)
 
 ---
 
 ## 🚀 Getting Started
 
-1.  **Start the MCP Server:**
+1.  **Clone the repo:**
     ```bash
-    python mcp_server/server.py
+    git clone https://github.com/<your-username>/networkagent.git
+    cd networkagent
     ```
-2.  **Run the Agent:**
+
+2.  **Install dependencies:**
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+3.  **Configure device connection** in `mcp_server/mcp_server.py`:
+    Update the `DEVICE` dict with your GNS3 switch's IP, port, and credentials.
+
+4.  **Start the MCP Server:**
+    ```bash
+    python mcp_server/mcp_server.py
+    ```
+
+5.  **Run the Agent:**
     ```bash
     python agent/network_agent_1P.py
     ```
-3.  **Simulate Failures:**
+
+6.  **Simulate Failures:**
     *   Shut down a critical interface.
     *   Change a production VLAN.
     *   Apply an ACL to deny traffic.
     *   Pause a connection on GNS3.
-
----
-
-## 🧠 Key Insight
-
-> The intelligence is not just the LLM; it is the **context** you provide to it.
-
-The agent makes decisions based on:
-*   Real-time interface states.
-*   Endpoint presence.
-*   Recent configuration history.
 
 ---
 
@@ -113,18 +165,36 @@ The agent makes decisions based on:
 
 ---
 
+## ⚠️ Limitations & Known Issues
+
+- Single device only — monitors one Cisco IOS switch at a time.
+- No rollback if a remediation action makes things worse.
+- Depends on specific IOS command output parsing (may break on different IOS versions).
+- LLM can occasionally produce malformed JSON, which the agent handles gracefully but skips the cycle.
+- Telnet-based connection (no SSH in current GNS3 lab setup).
+
+---
+
 ## 📌 Future Improvements
 
 - [ ] VLAN misconfiguration detection.
 - [ ] Interface flapping detection and dampening.
 - [ ] Long-term memory (event history database).
-- [ ] Confidence scoring for autonomous actions.
-- [ ] Multi-vendor/Multi-device support.
+- [ ] Multi-vendor / multi-device support.
+- [ ] Rollback mechanism for failed remediations.
+- [ ] Terminal recording / demo GIF for the README.
+
+### 🗺️ Series Roadmap
+| Part | Approach | Status |
+|:-----|:---------|:-------|
+| **1** | MCP + Ollama (this repo) | ✅ Done |
+| **2** | TBD | 🔜 Coming soon |
+| **3** | TBD | 🔜 Coming soon |
 
 ---
 
 ## 🤝 Contributing
 
-PRs are welcome! 
+PRs are welcome!
 
 ⭐ **If this was useful, give it a star — it helps others discover the project!**
