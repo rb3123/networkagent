@@ -50,16 +50,6 @@ This **IS**:
 
 The system utilizes an MCP server to provide the LLM with specific "tools" (via Netmiko) to interact with Cisco switches, while Ollama handles the reasoning logic locally.
 
-```
-┌─────────────┐     ┌─────────────┐     ┌─────────────────┐     ┌──────────────┐
-│  Ollama LLM │◄───►│   Agent     │◄───►│  MCP Server     │◄───►│ Cisco Switch │
-│  (Gemma4)   │     │  (Reasoner) │     │  (FastMCP +     │     │ (GNS3 Lab)   │
-│             │     │             │     │   Netmiko)      │     │              │
-└─────────────┘     └─────────────┘     └─────────────────┘     └──────────────┘
-                          │
-                    Detect → Analyze → Fix → Verify
-```
-
 ---
 
 ## 🔄 How It Works

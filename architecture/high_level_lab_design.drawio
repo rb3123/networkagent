@@ -1,6 +1,6 @@
 <mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.6.6 Chrome/144.0.7559.236 Electron/40.8.4 Safari/537.36" version="29.6.6">
   <diagram name="Page-1" id="9yIe1i5_l2Xnd5C48HVV">
-    <mxGraphModel dx="1141" dy="711" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+    <mxGraphModel dx="826" dy="486" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -80,6 +80,9 @@
         </mxCell>
         <mxCell id="tD8M2RCV3YyCdBsucWMV-4" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Decision Layer" vertex="1">
           <mxGeometry height="30" width="60" x="497.53" y="400" as="geometry" />
+        </mxCell>
+        <mxCell id="spqhIKF6Q_OHd39SGxzD-2" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Detect → Analyze → Fix → Verify" vertex="1">
+          <mxGeometry height="30" width="210" x="383.58000000000004" y="230" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
