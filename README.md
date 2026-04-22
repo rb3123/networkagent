@@ -87,6 +87,10 @@ interface e3/0
 ### ✅ 2. Misconfiguration (Auto-Fix)
 **Scenario:** An endpoint is moved to a port with the wrong VLAN assigned, breaking connectivity.
 
+![Misconfiguration Auto-Fix Demo](examples/network_agent_1P/example_2_incorrect_vlan/example2.gif)
+
+> 📖 [**Full walkthrough with raw AI reasoning →**](examples/network_agent_1P/example_2_incorrect_vlan/example2.md)
+
 **Agent Action:**
 1.  **Detects** a connectivity issue.
 2.  **Applies** the correct VLAN configuration.
