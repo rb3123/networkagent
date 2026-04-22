@@ -74,9 +74,9 @@ interface e3/0
   shutdown
 ```
 
-![Admin Mistake Auto-Heal Demo](examples/network_agent_1P/Example_1_port_admin_down/example1.gif)
+![Admin Mistake Auto-Heal Demo](examples/network_agent_1P/example_1_port_admin_down/example1.gif)
 
-> 📖 [**Full walkthrough with raw AI reasoning →**](examples/network_agent_1P/Example_1_port_admin_down/example1.md)
+> 📖 [**Full walkthrough with raw AI reasoning →**](examples/network_agent_1P/example_1_port_admin_down/example1.md)
 
 **Agent Action:**
 1.  **Detects** the `admin down` state.

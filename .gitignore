@@ -16,3 +16,9 @@ __pycache__/
 
 # Dependency/Tool Specific Folders (Based on your listing)
 .continue/
+
+# raw video
+*.mp4
+
+# drawio backup
+*.drawio.bkp

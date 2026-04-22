@@ -1,6 +1,6 @@
 # Example 1: Admin Mistake — Port Administratively Shut Down
 
-> The agent detects a critical trunk interface was accidentally shut down, autonomously brings it back up, and verifies connectivity is restored.
+> The agent detects a critical interface was accidentally shut down, autonomously brings it back up, and verifies connectivity is restored.
 
 ![Example 1 Demo](example1.gif)
 
@@ -87,7 +87,7 @@ The agent re-checks VIP reachability. Result: **reachable** ✅
    interface administrative state changes to alert operations before service impact.
 ```
 
-### Cycle #2–4 — Steady State
+### Cycle #2 — Steady State
 
 Subsequent cycles confirm the VIP remains reachable with no action needed.
 
