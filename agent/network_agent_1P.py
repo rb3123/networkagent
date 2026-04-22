@@ -1,6 +1,7 @@
 import asyncio
 import json
 import re
+import sys
 import time
 import textwrap
 from string import Template
@@ -13,6 +14,7 @@ OLLAMA_URL = "http://localhost:11434/api/chat"
 MODEL = "gemma4:e4b"
 MCP_URL = "http://localhost:8000/mcp"
 CHECK_INTERVAL = 30
+PRINT_DELAY = 0.02  # seconds per character for slow printing
 
 VIP_IP = "192.168.254.10"
 USER_PORT = "Ethernet3/0"
@@ -72,6 +74,16 @@ SYSTEM_PROMPT = Template(textwrap.dedent("""\
 """)).substitute(vip_ip=VIP_IP, user_port=USER_PORT, access_vlan=ACCESS_VLAN)
 
 
+def slow_print(text: str, delay: float = PRINT_DELAY):
+    """Print text character-by-character for readability."""
+    for ch in text:
+        sys.stdout.write(ch)
+        sys.stdout.flush()
+        time.sleep(delay)
+    sys.stdout.write("\n")
+    sys.stdout.flush()
+
+
 def call_ollama(messages: list) -> tuple[str, str | None, float]:
     """Returns (content, thinking, elapsed_seconds) tuple."""
     start = time.perf_counter()
@@ -128,9 +140,10 @@ async def run_agent_cycle(client: Client, cycle: int):
         if thinking:
             print(f"\n  💭 THINKING:")
             for line in thinking.strip().splitlines():
-                print(f"     {line}")
+                slow_print(f"     {line}")
 
-        print(f"\n  🤖 RESPONSE: {ai_response}")
+        print(f"\n  🤖 RESPONSE:")
+        slow_print(f"  {ai_response}")
 
         try:
             parsed = parse_json_response(ai_response)
@@ -143,15 +156,15 @@ async def run_agent_cycle(client: Client, cycle: int):
             action = parsed.get("action", "unknown")
             reason = parsed.get("reason", "No reason provided.")
             icon = "✅" if action == "none" else "🔧"
-            print(f"\n  {icon} VERDICT [{action.upper()}]: {reason}")
+            slow_print(f"\n  {icon} VERDICT [{action.upper()}]: {reason}")
 
             if action == "corrective":
                 summary = parsed.get("summary")
                 prevention = parsed.get("prevention")
                 if summary:
-                    print(f"\n  📝 SUMMARY: {summary}")
+                    slow_print(f"\n  📝 SUMMARY: {summary}")
                 if prevention:
-                    print(f"  🛡️  PREVENTION: {prevention}")
+                    slow_print(f"  🛡️  PREVENTION: {prevention}")
 
             cycle_elapsed = time.perf_counter() - cycle_start
             print(f"\n  ⏱️  CYCLE TIMING:")
@@ -199,9 +212,9 @@ async def run_agent_cycle(client: Client, cycle: int):
                 result_obj = json.loads(result_text.replace("'", '"'))
                 print(f"  📋 RESULT:")
                 for k, v in result_obj.items():
-                    print(f"       {k}: {v}")
+                    slow_print(f"       {k}: {v}")
             except (json.JSONDecodeError, AttributeError):
-                print(f"  📋 RESULT: {result_text}")
+                slow_print(f"  📋 RESULT: {result_text}")
         except Exception as e:
             mcp_elapsed = time.perf_counter() - mcp_start
             total_mcp_time += mcp_elapsed
